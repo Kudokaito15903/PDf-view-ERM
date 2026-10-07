@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@theme {
+  --color-medical-50: #f0f9ff;
+  --color-medical-100: #e0f2fe;
+  --color-medical-500: #0ea5e9;
+  --color-medical-600: #0284c7;
+  --color-medical-700: #0369a1;
+  --color-medical-800: #075985;
+  --color-medical-900: #0c4a6e;
+  --color-medical-950: #082f49;
+  --color-slate-850: #1e293b;
+}
+
+@layer base {
+  html, body, #root {
+    @apply h-full w-full overflow-hidden m-0 p-0 antialiased font-sans;
+  }
+}
+
+/* Text layer và annotation layer cho react-pdf / PDF.js */
+.react-pdf__Page {
+  @apply relative inline-block bg-white shadow-xl rounded-sm border border-slate-300 mx-auto;
+}
+
+.react-pdf__Page__canvas {
+  @apply block mx-auto w-full h-auto;
+}
+
+.react-pdf__Page__textContent {
+  @apply absolute inset-0 overflow-hidden leading-none select-text pointer-events-auto;
+}
+
+.react-pdf__Page__textContent span {
+  @apply absolute text-transparent whitespace-pre cursor-text origin-top-left;
+}
+
+.react-pdf__Page__textContent span::selection {
+  @apply bg-cyan-500/40 text-transparent;
+}
+
+/* Scrollbar y tế nhạt đẹp */
+.viewer-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.viewer-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.viewer-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 5px;
+  border: 2px solid #f1f5f9;
+}
+.viewer-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+/* Định dạng in ấn chuẩn tờ A4 gốc */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* Ẩn triệt để toàn bộ header, thanh công cụ, các nút bấm và toàn bộ vùng xem tương tác trên màn hình */
+  header,
+  nav,
+  button,
+  input,
+  form,
+  .btn-tool,
+  .screen-viewer,
+  .pdf-page-shell,
+  .pdf-page-badge,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset toàn bộ container cha từ root xuống để không bị ngắt quãng, overflow hay cuộn */
+  html,
+  body,
+  #root,
+  #root > div,
+  #root div,
+  main,
+  .viewer-scroll,
+  .react-pdf__Document {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  /* VÙNG IN CHUYÊN DỤNG (Scale 1.0 cố định của API) */
+  .print-viewer {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Từng trang A4: Chuẩn kích thước API gốc, hoàn toàn độc lập với mức Zoom trên màn hình */
+  .print-page-slot {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 210mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 270mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Trang cuối cùng: Tuyệt đối không ngắt trang để không sinh trang trắng ở cuối */
+  .print-page-slot:last-child,
+  .print-page-slot:last-of-type {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* Khung trang React-PDF bên trong vùng in */
+  .print-page-slot .react-pdf__Page {
+    box-shadow: none !important;
+    filter: none !important;
+    border: none !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 190mm !important;
+    max-height: 268mm !important;
+    width: 100% !important;
+    height: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    background: transparent !important;
+  }
+
+  /* Canvas co dãn vừa khít khổ A4, an toàn tuyệt đối với cả Margins Default lẫn Margins None */
+  .print-page-slot .react-pdf__Page__canvas {
+    display: block !important;
+    margin: 0 auto !important;
+    max-width: 190mm !important;
+    max-height: 265mm !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Ẩn text layer và annotations khi in để tránh chữ bị đè lệch vị trí */
+  .react-pdf__Page__textContent,
+  .react-pdf__Page__annotations {
+    display: none !important;
+  }
+}
+
+
